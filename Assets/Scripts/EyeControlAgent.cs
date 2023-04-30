@@ -1,0 +1,247 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
+
+public class EyeControlAgent : Agent
+{
+	#region Parameters    
+	[Header("Eye control parameters")]
+	[Tooltip("Target for the agent to look for with both eyes (cameras).")]
+	public GameObject target;
+
+	[Tooltip("Camera used for rendering the left side view.")]
+	public Camera leftEyeCamera;
+
+	[Tooltip("Camera used for rendering the right side view.")]
+	public Camera rightEyeCamera;
+
+	[Tooltip("Plane used to limit left eye camera rotation.")]
+	public GameObject leftEyeRestrictionPlane;
+
+	[Tooltip("Plane used to limit right eye camera rotation.")]
+	public GameObject rightEyeRestrictionPlane;
+
+	[Tooltip("Controls the speed at wich the agent is able to rotate each eye, in degrees per second.")]
+	[Range(0.05f, 0.5f)]
+	public float eyeRotationSpeed;
+
+	[Tooltip("Wether the agent should use the camera rotation positions as inputs.")]
+	public bool useVectorObservations;
+
+	[Header("On inference")]
+	[Tooltip("Time between desicions on inference mode.")]
+	[Range(0.05f, 0.5f)]
+	public float timeBetweenDecisionsAtInference;
+	#endregion
+
+	#region Member Parameters
+	/// <summary>
+	/// Time since last desicion was taken in inference mode.
+	/// </summary>
+	float m_TimeSinceDecision;
+
+	/// <summary>
+	/// Academy paramters for base set 
+	/// </summary>
+	EnvironmentParameters m_ResetParameters;
+
+	/// <summary>
+	/// Define the index related to each posible discrete action rotation direction.
+	/// </summary>
+	enum CameraRotationActions : int
+    {
+		Nothing = 0,
+		Positive = 1,
+		Negative = 2,
+    }
+    #endregion
+
+    #region Agent Overrides
+    /// <summary>
+    /// Initialice agent parameters and set enviroment.
+    /// </summary>
+    public override void Initialize()
+	{
+		// Get enviroment parameters from the academy parameters.
+		m_ResetParameters = Academy.Instance.EnvironmentParameters;
+
+		// Set the agent.
+		SetAgent();
+
+		// Set the target.
+		SetTarget();		
+	}
+
+	/// <summary>
+	/// Add vector observations if the useVectorObservations flag is set.
+	/// Use camera rotations in the x and z planes as observations.
+	/// </summary>
+	/// <param name="sensor">Vector sensor to add observations to.</param>
+	public override void CollectObservations(VectorSensor sensor)
+	{
+		// If the agent showld use the camera rotations as observations.
+		if (useVectorObservations)
+		{
+			// Add left eye rotation as observations.
+			sensor.AddObservation(leftEyeCamera.transform.localRotation.eulerAngles.x);
+			sensor.AddObservation(leftEyeCamera.transform.localRotation.eulerAngles.z);
+
+			// Add right eye rotation as observations.
+			sensor.AddObservation(leftEyeCamera.transform.localRotation.eulerAngles.x);
+			sensor.AddObservation(leftEyeCamera.transform.localRotation.eulerAngles.z);
+		}
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="actionMask"></param>
+	public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
+	{
+		// TODO Mask actions that would cause the agent to pass the camera rotation limitations.
+	}
+
+	/// <summary>
+	/// Receibe actions and process them for eye control.
+	/// </summary>
+	/// <param name="actionBuffers">Actions buffer to get actions from.</param>
+	public override void OnActionReceived(ActionBuffers actionBuffers)
+	{
+		// Get left and right eye action buffers for the X and Z directions.
+		var leftEyeActionX = actionBuffers.DiscreteActions[0];
+		var leftEyeActionZ = actionBuffers.DiscreteActions[1];
+		var rightEyeActionX = actionBuffers.DiscreteActions[2];
+		var rightEyeActionZ = actionBuffers.DiscreteActions[3];
+
+		// Rotate each camera by a given direction with the corresponding rotation action.
+		RotateCamera(leftEyeCamera, Vector3.right, (CameraRotationActions) leftEyeActionX);
+		RotateCamera(leftEyeCamera, Vector3.forward, (CameraRotationActions) leftEyeActionZ);
+		RotateCamera(rightEyeCamera, Vector3.right, (CameraRotationActions) rightEyeActionX);
+		RotateCamera(rightEyeCamera, Vector3.forward, (CameraRotationActions) rightEyeActionZ);
+
+		// TODO set agent rewards.
+		// Remove reward from agent the longer it takes to find the target.
+		AddReward(-0.01f);
+	}
+
+	/// <summary>
+	/// For every episode, set the agent and the target.
+	/// </summary>
+	public override void OnEpisodeBegin()
+	{
+		// Set the agent.
+		SetAgent();
+
+		// Set the target.
+		SetTarget();
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="actionsOut"></param>
+	public override void Heuristic(in ActionBuffers actionsOut)
+	{
+		// TODO gather user inputs as discrete actions for the agent.
+	}
+	#endregion
+
+	#region Other Methods
+	/// <summary>
+	/// Randomice agent eyes' orientation.
+	/// </summary>
+	private void SetAgent()
+	{
+		// Rotate left camera to random angles in the x and z planes.
+		leftEyeCamera.transform.Rotate(Vector3.right, Random.Range(-180f, 180f));
+		leftEyeCamera.transform.Rotate(Vector3.forward, Random.Range(-180f, 180f));
+
+		// Rotate right camera to random angles in the x and z planes.
+		rightEyeCamera.transform.Rotate(Vector3.right, Random.Range(-180f, 180f));
+		rightEyeCamera.transform.Rotate(Vector3.forward, Random.Range(-180f, 180f));
+	}
+
+	/// <summary>
+	/// Randomice target position on backgrownd, change it's color, and change it's shape.
+	/// </summary>
+	public void SetTarget()
+	{
+		// TODO Randomize target position on backgrownd
+		// TODO Change target color
+		// TODO Change target mesh        
+	}
+
+	/// <summary>
+	/// Rotate a given camera with a direction vector and the corresponding action.
+	/// </summary>
+	/// <param name="camera">The camera to rotate.</param>
+	/// <param name="direction">The direction Vector3.</param>
+	/// <param name="action">The corresponding action (positive rotation, negative rotation, or do nothing).</param>
+	void RotateCamera(Camera camera, Vector3 direction, CameraRotationActions action)
+    {
+		// On a given camera control action action select.
+		switch (action)
+		{
+			case CameraRotationActions.Nothing:
+				// do nothing
+				break;
+
+			case CameraRotationActions.Positive:
+				gameObject.transform.Rotate(direction, eyeRotationSpeed * Time.deltaTime);
+				break;
+
+			case CameraRotationActions.Negative:
+				gameObject.transform.Rotate(-direction, eyeRotationSpeed * Time.deltaTime);
+				break;
+		}
+	}
+
+	/// <summary>
+	/// Update method called once per frame.
+	/// </summary>
+	public void FixedUpdate()
+	{
+		// If both cameras are set and there is a graphical device to render
+		if (leftEyeCamera != null 
+			&& rightEyeCamera != null 
+			&& SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null)
+		{
+			// Force render both cameras.
+			leftEyeCamera.Render();
+			rightEyeCamera.Render();
+		}
+
+		// If not on inference mode.
+		if (Academy.Instance.IsCommunicatorOn)
+		{
+			RequestDecision();
+		}
+
+		// If on inference mode.
+		else
+		{
+			// If the time required between desicions has passed.
+			if (m_TimeSinceDecision >= timeBetweenDecisionsAtInference)
+			{
+				// Manually request a desicion.
+				RequestDecision();
+
+				// Reset time between decisions.
+				m_TimeSinceDecision = 0f;
+			}
+
+			// If the time between desicions hasn't passed.
+			else
+			{
+				// Add the time between fixed updates to the time between desicions.
+				m_TimeSinceDecision += Time.fixedDeltaTime;
+			}
+		}
+	}
+	#endregion
+}
