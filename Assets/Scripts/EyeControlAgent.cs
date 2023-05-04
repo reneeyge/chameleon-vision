@@ -30,7 +30,11 @@ public class EyeControlAgent : Agent
 	[Range(0.05f, 0.5f)]
 	public float eyeRotationSpeed;
 
-	[Tooltip("Wether the agent should use the camera rotation positions as inputs.")]
+    [Tooltip("Controls the amount of time the target agent showld keep eyesight on the target before goal.")]
+    [Range(0.0f, 10.0f)]
+    public float eyeOnTargetTime;
+
+    [Tooltip("Wether the agent should use the camera rotation positions as inputs.")]
 	public bool useVectorObservations;
 
 	[Header("On inference")]
@@ -46,14 +50,34 @@ public class EyeControlAgent : Agent
 	float m_TimeSinceDecision;
 
 	/// <summary>
-	/// Academy paramters for base set 
+	/// The amount of time the 
 	/// </summary>
-	EnvironmentParameters m_ResetParameters;
+	float m_TimeOnTarget;
+
+    /// <summary>
+    /// Wheter the left camera is fully focused on the target or not.
+    /// </summary>
+    bool m_LeftEyeWasOnTarget;
+
+    /// <summary>
+    /// Wheter the right camera is fully focused on the target or not.
+    /// </summary>
+    bool m_RightEyeWasOnTarget;
+
+    /// <summary>
+    /// Academy training paramters.
+    /// </summary>
+    EnvironmentParameters m_ResetParameters;
 
 	/// <summary>
-	/// Define the index related to each posible discrete action rotation direction.
+	/// The target's mesh renderer.
 	/// </summary>
-	enum CameraRotationActions : int
+	MeshRenderer m_TargetMeshRenderer;
+
+    /// <summary>
+    /// Define the index related to each posible discrete action rotation direction.
+    /// </summary>
+    enum CameraRotationActions : int
     {
 		Nothing = 0,
 		Positive = 1,
@@ -70,8 +94,18 @@ public class EyeControlAgent : Agent
 		// Get enviroment parameters from the academy parameters.
 		m_ResetParameters = Academy.Instance.EnvironmentParameters;
 
-		// Set the agent.
-		SetAgent();
+		// Get target's mesh renderer.
+		m_TargetMeshRenderer = target.GetComponent<MeshRenderer>();
+
+        // Set the previous state for if the agent has either eye on the target to false.
+        m_LeftEyeWasOnTarget = false;
+        m_RightEyeWasOnTarget = false;
+
+        // Clear the eye sight timer.
+        m_TimeOnTarget = 0.0f;
+
+        // Set the agent.
+        SetAgent();
 
 		// Set the target.
 		SetTarget();		
@@ -134,8 +168,15 @@ public class EyeControlAgent : Agent
 	/// </summary>
 	public override void OnEpisodeBegin()
 	{
-		// Set the agent.
-		SetAgent();
+        // Set the previous state for if the agent has either eye on the target to false.
+        m_LeftEyeWasOnTarget = false;
+        m_RightEyeWasOnTarget = false;
+
+        // Clear the eye sight timer.
+        m_TimeOnTarget = 0.0f;
+
+        // Set the agent.
+        SetAgent();
 
 		// Set the target.
 		SetTarget();
