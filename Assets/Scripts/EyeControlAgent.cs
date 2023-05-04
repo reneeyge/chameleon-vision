@@ -158,10 +158,46 @@ public class EyeControlAgent : Agent
 		RotateCamera(rightEyeCamera, Vector3.right, (CameraRotationActions) rightEyeActionX);
 		RotateCamera(rightEyeCamera, Vector3.forward, (CameraRotationActions) rightEyeActionZ);
 
-		// TODO set agent rewards.
-		// Remove reward from agent the longer it takes to find the target.
-		AddReward(-0.01f);
-	}
+		// Check if the target is in the frustrum for both the left and right cameras.
+		bool leftEyeOnTarget = TargetInCameraFrustrum(m_TargetMeshRenderer, leftEyeCamera);
+		bool rightEyeOnTarget = TargetInCameraFrustrum(m_TargetMeshRenderer, rightEyeCamera);
+
+		// Reward the agent if the target comes into view of either eye.
+		// Unreward the agent if the target comes out of view of either eye.
+		AddReward(System.Convert.ToInt32(leftEyeOnTarget) - System.Convert.ToInt32(m_LeftEyeWasOnTarget));
+		AddReward(System.Convert.ToInt32(rightEyeOnTarget) - System.Convert.ToInt32(m_RightEyeWasOnTarget));
+
+        // If both eyes are on target.
+        if (leftEyeOnTarget && rightEyeOnTarget)
+        {
+			// Add to the counter the amount of time that the agent has kept the target on view.
+			m_TimeOnTarget = Time.deltaTime;
+        }
+
+		// If the agent doesn't ahve both eyes on the target.
+		else
+		{
+			// Remove reward from agent the longer it takes to find the target.
+            AddReward(-0.01f);
+
+			// Clear the eye sight timer.
+            m_TimeOnTarget = 0.0f;
+		}
+
+        // If the agent keeps the target on sight with both eyes for at least eyeOnTargetTime seconds.
+		if (m_TimeOnTarget >= eyeOnTargetTime)
+		{
+            // Reward the agent for completing the episode.
+            AddReward(2.0f);
+
+            // End the episode.
+            EndEpisode();
+		}
+
+        // Set the previous state for if the agent has either eye on the target.
+        m_LeftEyeWasOnTarget = leftEyeOnTarget;
+		m_RightEyeWasOnTarget = rightEyeOnTarget;
+    }
 
 	/// <summary>
 	/// For every episode, set the agent and the target.
