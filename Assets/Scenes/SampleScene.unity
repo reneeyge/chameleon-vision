@@ -138,7 +138,6 @@ GameObject:
   - component: {fileID: 38529371}
   - component: {fileID: 38529370}
   - component: {fileID: 38529369}
-  - component: {fileID: 38529372}
   - component: {fileID: 38529373}
   m_Layer: 3
   m_Name: Head
@@ -242,12 +241,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 0
-    NumStackedVectorObservations: 5
+    VectorObservationSize: 4
+    NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 01000000
-    VectorActionSize: 01000000
+      BranchSizes: 03000000030000000300000003000000
+    VectorActionSize: 03000000030000000300000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -272,7 +271,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Camera: {fileID: 2054590220}
-  m_SensorName: CameraSensor
+  m_SensorName: RightCameraSensor
   m_Width: 84
   m_Height: 84
   m_Grayscale: 0
@@ -292,27 +291,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Camera: {fileID: 1225819695}
-  m_SensorName: CameraSensor
+  m_SensorName: LeftCameraSensor
   m_Width: 84
   m_Height: 84
   m_Grayscale: 0
   m_ObservationType: 0
   m_ObservationStacks: 1
   m_Compression: 1
---- !u!114 &38529372
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 38529363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45ec273bd0e930b43b5e317bd9729ca5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  leftEyeCamera: {fileID: 1225819695}
-  rightEyeCamera: {fileID: 2054590220}
 --- !u!114 &38529373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,13 +314,14 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  target: {fileID: 0}
-  leftEyeCamera: {fileID: 0}
-  rightEyeCamera: {fileID: 0}
+  target: {fileID: 1889251311}
+  leftEyeCamera: {fileID: 1225819695}
+  rightEyeCamera: {fileID: 2054590220}
   leftEyeRestrictionPlane: {fileID: 0}
   rightEyeRestrictionPlane: {fileID: 0}
-  eyeRotationSpeed: 0
-  useVectorObservations: 0
+  eyeRotationSpeed: 0.05
+  eyeOnTargetTime: 0.5
+  useVectorObservations: 1
   timeBetweenDecisionsAtInference: 0
 --- !u!1 &122705600
 GameObject:
@@ -1191,7 +1177,7 @@ GameObject:
   - component: {fileID: 1889251313}
   - component: {fileID: 1889251312}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
