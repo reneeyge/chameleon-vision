@@ -27,7 +27,7 @@ public class EyeControlAgent : Agent
 	public GameObject rightEyeRestrictionPlane;
 
 	[Tooltip("Controls the speed at wich the agent is able to rotate each eye, in degrees per second.")]
-	[Range(0.05f, 0.5f)]
+	[Range(10.0f, 180.0f)]
 	public float eyeRotationSpeed;
 
     [Tooltip("Controls the amount of time the target agent showld keep eyesight on the target before goal.")]
