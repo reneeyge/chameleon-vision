@@ -269,11 +269,11 @@ public class EyeControlAgent : Agent
 				break;
 
 			case CameraRotationActions.Positive:
-				gameObject.transform.Rotate(direction, eyeRotationSpeed * Time.deltaTime);
+                camera.transform.Rotate(direction, eyeRotationSpeed * Time.deltaTime);
 				break;
 
 			case CameraRotationActions.Negative:
-				gameObject.transform.Rotate(-direction, eyeRotationSpeed * Time.deltaTime);
+                camera.transform.Rotate(-direction, eyeRotationSpeed * Time.deltaTime);
 				break;
 		}
 	}
