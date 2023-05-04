@@ -201,6 +201,28 @@ public class EyeControlAgent : Agent
 		}
 	}
 
+    /// <summary>
+    /// Check if the target's AABB from the target's bounds are utside the camera's frustrum. 
+    /// </summary>
+    /// <param name="renderer">The target's mesh renderer.</param>
+    /// <param name="camera">The camere to check for if the target is within its frustrum.</param>
+    /// <returns>True if the object is fully within the camera's frustrum, false if otherwise.</returns>
+    bool TargetInCameraFrustrum(Renderer renderer, Camera camera)
+	{
+        // Get the frustrum planes for the left and right eye cameras.
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(leftEyeCamera);
+
+		// Iterate over each plane.
+        for (int i = 0; i < planes.Length; i++)
+        {
+			// Flip each plane.
+            planes[i] = planes[i].flipped;
+        }
+
+		// Return if the AABB planes from the target's bounds are outside the camera's frustrum planes.
+		return !GeometryUtility.TestPlanesAABB(planes, renderer.bounds); ;
+    }
+
 	/// <summary>
 	/// Update method called once per frame.
 	/// </summary>
