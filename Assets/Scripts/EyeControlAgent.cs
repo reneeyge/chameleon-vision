@@ -113,7 +113,7 @@ public class EyeControlAgent : Agent
 
 	/// <summary>
 	/// Add vector observations if the useVectorObservations flag is set.
-	/// Use camera rotations in the x and z planes as observations.
+	/// Use camera rotations in the x and y planes as observations.
 	/// </summary>
 	/// <param name="sensor">Vector sensor to add observations to.</param>
 	public override void CollectObservations(VectorSensor sensor)
@@ -146,17 +146,17 @@ public class EyeControlAgent : Agent
 	/// <param name="actionBuffers">Actions buffer to get actions from.</param>
 	public override void OnActionReceived(ActionBuffers actionBuffers)
 	{
-		// Get left and right eye action buffers for the X and Z directions.
+		// Get left and right eye action buffers for the X and Y directions.
 		var leftEyeActionX = actionBuffers.DiscreteActions[0];
 		var leftEyeActionZ = actionBuffers.DiscreteActions[1];
 		var rightEyeActionX = actionBuffers.DiscreteActions[2];
 		var rightEyeActionZ = actionBuffers.DiscreteActions[3];
-
+		
 		// Rotate each camera by a given direction with the corresponding rotation action.
 		RotateCamera(leftEyeCamera, Vector3.right, (CameraRotationActions) leftEyeActionX);
-		RotateCamera(leftEyeCamera, Vector3.forward, (CameraRotationActions) leftEyeActionZ);
+		RotateCamera(leftEyeCamera, Vector3.up, (CameraRotationActions) leftEyeActionZ);
 		RotateCamera(rightEyeCamera, Vector3.right, (CameraRotationActions) rightEyeActionX);
-		RotateCamera(rightEyeCamera, Vector3.forward, (CameraRotationActions) rightEyeActionZ);
+		RotateCamera(rightEyeCamera, Vector3.up, (CameraRotationActions) rightEyeActionZ);
 
 		// Check if the target is in the frustrum for both the left and right cameras.
 		bool leftEyeOnTarget = TargetInCameraFrustrum(m_TargetMeshRenderer, leftEyeCamera);
@@ -234,13 +234,13 @@ public class EyeControlAgent : Agent
 	/// </summary>
 	private void SetAgent()
 	{
-		// Rotate left camera to random angles in the x and z planes.
+		// Rotate left camera to random angles in the x and y planes.
 		leftEyeCamera.transform.Rotate(Vector3.right, Random.Range(-180f, 180f));
-		leftEyeCamera.transform.Rotate(Vector3.forward, Random.Range(-180f, 180f));
+		leftEyeCamera.transform.Rotate(Vector3.up, Random.Range(-180f, 180f));
 
-		// Rotate right camera to random angles in the x and z planes.
+		// Rotate right camera to random angles in the x and y planes.
 		rightEyeCamera.transform.Rotate(Vector3.right, Random.Range(-180f, 180f));
-		rightEyeCamera.transform.Rotate(Vector3.forward, Random.Range(-180f, 180f));
+		rightEyeCamera.transform.Rotate(Vector3.up, Random.Range(-180f, 180f));
 	}
 
 	/// <summary>
