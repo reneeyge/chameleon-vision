@@ -79,9 +79,9 @@ public class EyeControlAgent : Agent
     /// </summary>
     enum CameraRotationActions : int
     {
-		Nothing = 0,
-		Positive = 1,
-		Negative = 2,
+        Negative = 0,
+        Nothing = 1,
+		Positive = 2,
     }
     #endregion
 
@@ -219,13 +219,22 @@ public class EyeControlAgent : Agent
 	}
 
 	/// <summary>
-	/// 
+	/// Heuristic method of controlling agent motion.
+	/// Set aggent eye motion from the arrow keys (X = horizontal arrows, Y + vertical arrows).
 	/// </summary>
 	/// <param name="actionsOut"></param>
 	public override void Heuristic(in ActionBuffers actionsOut)
 	{
-		// TODO gather user inputs as discrete actions for the agent.
-	}
+		// Get descrete actions from the ActionBuffers.
+		ActionSegment<int> descreteActions = actionsOut.DiscreteActions;
+
+        // Set discrete actions for the X component of rotation to the Horizontal arrows.
+        // Set discrete actions for the Y component of rotation to the Vertical arrows.
+        descreteActions[0] = (int) Input.GetAxisRaw("Horizontal") + 1;
+		descreteActions[1] = (int) Input.GetAxisRaw("Vertical") + 1;
+		descreteActions[2] = (int) Input.GetAxisRaw("Horizontal") + 1;
+		descreteActions[3] = (int) Input.GetAxisRaw("Vertical") + 1;
+    }
 	#endregion
 
 	#region Other Methods
