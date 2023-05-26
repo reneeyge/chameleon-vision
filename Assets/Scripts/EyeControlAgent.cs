@@ -92,8 +92,15 @@ public class EyeControlAgent : Agent
     /// </summary>
     public override void Initialize()
 	{
-		// Get enviroment parameters from the academy parameters.
-		m_ResetParameters = Academy.Instance.EnvironmentParameters;
+        // If on inference mode or heuristic.
+        if (!Academy.Instance.IsCommunicatorOn)
+        {
+			// Set the max step to zero.
+            this.MaxStep = 0;
+        }
+
+        // Get enviroment parameters from the academy parameters.
+        m_ResetParameters = Academy.Instance.EnvironmentParameters;
 
 		// Get target's mesh renderer.
 		m_TargetMeshRenderer = target.GetComponent<MeshRenderer>();
@@ -109,7 +116,7 @@ public class EyeControlAgent : Agent
         SetAgent();
 
 		// Set the target.
-		SetTarget();		
+		SetTarget();
 	}
 
 	/// <summary>
