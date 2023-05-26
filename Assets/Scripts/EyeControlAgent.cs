@@ -130,13 +130,6 @@ public class EyeControlAgent : Agent
 			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x));
 			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y));
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="actionMask"></param>
-	public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
-	{
-		// TODO Mask actions that would cause the agent to pass the camera rotation limitations.
             // Add left eye restriction angles as observations.
             sensor.AddObservation(leftEyeRestrictionAngle.x);
             sensor.AddObservation(leftEyeRestrictionAngle.y);
@@ -144,6 +137,7 @@ public class EyeControlAgent : Agent
             // Add right eye restriction angles as observations.
             sensor.AddObservation(rightEyeRestrictionAngle.x);
             sensor.AddObservation(rightEyeRestrictionAngle.y);
+        }
 	}
 
 	/// <summary>
