@@ -289,7 +289,7 @@ public class EyeControlAgent : Agent
 	/// <param name="action">The corresponding action (positive rotation, negative rotation, or do nothing).</param>
 	void RotateCamera(Camera camera, Vector3 direction, CameraRotationActions action)
     {
-		// On a given camera control action action select.
+		// On a given camera apply the control action.
 		switch (action)
 		{
 			case CameraRotationActions.Nothing:
@@ -416,7 +416,7 @@ public class EyeControlAgent : Agent
 	/// </summary>
 	public void FixedUpdate()
 	{
-		// If both cameras are set and there is a graphical device to render
+		// If both cameras are set and there is a graphical device to render.
 		if (leftEyeCamera != null 
 			&& rightEyeCamera != null 
 			&& SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null)
@@ -426,13 +426,14 @@ public class EyeControlAgent : Agent
 			rightEyeCamera.Render();
 		}
 
-		// If not on inference mode.
+		// If not on inference mode or heuristic.
 		if (Academy.Instance.IsCommunicatorOn)
 		{
-			RequestDecision();
+            // Manually request a desicion.
+            RequestDecision();
 		}
 
-		// If on inference mode.
+		// If on inference mode or heuristic.
 		else
 		{
 			// If the time required between desicions has passed.
