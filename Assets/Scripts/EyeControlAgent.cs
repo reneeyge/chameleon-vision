@@ -309,7 +309,6 @@ public class EyeControlAgent : Agent
 	}
 
     /// <summary>
-    /// Check if the target's AABB from the target's bounds are utside the camera's frustrum. 
     /// Clamp the camera's x and y angles, by the given angles (restricted to: -angle, angle).
 	/// The z angle is left as zero.
     /// </summary>
@@ -365,25 +364,38 @@ public class EyeControlAgent : Agent
     }
 
     /// <summary>
-    /// Check if the target's AABB from the target's bounds are outside the camera's frustrum. 
+    /// Check if the target's AABB from the target's bounds are outside the camera's frustum. 
     /// </summary>
     /// <param name="renderer">The target's mesh renderer.</param>
-    /// <param name="camera">The camere to check for if the target is within its frustrum.</param>
-    /// <returns>True if the object is fully within the camera's frustrum, false if otherwise.</returns>
-    bool TargetInCameraFrustrum(Renderer renderer, Camera camera)
+    /// <param name="camera">The camere to check for if the target is within its frustum.</param>
+    /// <returns>True if the object is fully within the camera's frustum, false if otherwise.</returns>
+    bool TargetInCameraFrustum(Renderer renderer, Camera camera)
 	{
-        // Get the frustrum planes for the left and right eye cameras.
+        // Get the frustum planes for the left and right eye cameras.
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(leftEyeCamera);
 
-		// Iterate over each plane.
-        for (int i = 0; i < planes.Length; i++)
-        {
-			// Flip each plane.
-            planes[i] = planes[i].flipped;
-        }
+		// Initialice condition on true. 
+		bool isInFrustrum = true;
 
-		// Return if the AABB planes from the target's bounds are outside the camera's frustrum planes.
-		return !GeometryUtility.TestPlanesAABB(planes, renderer.bounds); ;
+		// Iterate over each plane.
+		for (int i = 0; i < planes.Length; i++)
+		{
+            // Flip the plane.
+            Plane plane = planes[i].flipped;
+
+            // Get the point on the edge of the bounding "elipsoid":
+            // closest to the plane when the center is on the oposite side of the plane's normal,
+            // and furthest to the plane when the center is on the same side of the plane's normal.
+            Vector3 closestPoint = renderer.bounds.center + (plane.normal.normalized * renderer.bounds.extents.magnitude);
+
+            // If the closest point is not on the same side as the plane's normal, "and" the result.
+            isInFrustrum &= !plane.GetSide(closestPoint);
+        }
+		
+		// Return if the target's bounds are in the camera's frustum planes.
+		return isInFrustrum;
+    }
+
     /// <summary>
     /// Check if the target's AABB from the target's bounds are outside the camera's frustum. 
     /// </summary>
