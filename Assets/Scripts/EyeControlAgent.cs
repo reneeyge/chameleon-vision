@@ -273,13 +273,12 @@ public class EyeControlAgent : Agent
 	}
 
 	/// <summary>
-	/// Randomice target position on backgrownd, change it's color, and change it's shape.
+	/// Randomice target position on backgrownd.
 	/// </summary>
 	public void SetTarget()
 	{
-		// TODO Randomize target position on backgrownd
-		// TODO Change target color
-		// TODO Change target mesh        
+		// Randomice position in y and z.
+		target.transform.localPosition = new Vector3(5, Random.Range(-4, 4), Random.Range(-4, 4));
 	}
 
 	/// <summary>
