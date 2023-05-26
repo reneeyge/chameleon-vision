@@ -123,14 +123,12 @@ public class EyeControlAgent : Agent
 		if (useVectorObservations)
 		{
 			// Add left eye rotation as observations.
-			sensor.AddObservation(leftEyeCamera.transform.localRotation.eulerAngles.x);
-			sensor.AddObservation(leftEyeCamera.transform.localRotation.eulerAngles.z);
+			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x));
+			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y));
 
 			// Add right eye rotation as observations.
-			sensor.AddObservation(leftEyeCamera.transform.localRotation.eulerAngles.x);
-			sensor.AddObservation(leftEyeCamera.transform.localRotation.eulerAngles.z);
-		}
-	}
+			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x));
+			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y));
 
 	/// <summary>
 	/// 
