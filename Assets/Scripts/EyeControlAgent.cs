@@ -66,6 +66,16 @@ public class EyeControlAgent : Agent
     bool m_RightEyeWasOnTarget;
 
     /// <summary>
+    /// Wheter the left camera is partially focused on the target or not.
+    /// </summary>
+    bool m_LeftEyeWasPartiallyOnTarget;
+
+    /// <summary>
+    /// Wheter the right camera is partially focused on the target or not.
+    /// </summary>
+    bool m_RightEyeWasPartiallyOnTarget;
+
+    /// <summary>
     /// Academy training paramters.
     /// </summary>
     EnvironmentParameters m_ResetParameters;
@@ -184,8 +194,9 @@ public class EyeControlAgent : Agent
 		AddReward(System.Convert.ToInt32(rightEyeOnTarget) - System.Convert.ToInt32(m_RightEyeWasOnTarget));
 
         // Reward the agent if the target comes partially into view of either eye.
-        AddReward(System.Convert.ToInt32(leftEyePartiallyOnTarget) * 0.5f);
-        AddReward(System.Convert.ToInt32(rightEyePartiallyOnTarget) * 0.5f);
+        // Unreward the agent if the target comes out of view of either eye.
+        AddReward((System.Convert.ToInt32(leftEyePartiallyOnTarget) - System.Convert.ToInt32(m_LeftEyeWasPartiallyOnTarget)) * 0.5f);
+        AddReward((System.Convert.ToInt32(rightEyePartiallyOnTarget) - System.Convert.ToInt32(m_RightEyeWasPartiallyOnTarget)) * 0.5f);
 
         // If both eyes are on target.
         if (leftEyeOnTarget && rightEyeOnTarget)
@@ -217,6 +228,8 @@ public class EyeControlAgent : Agent
         // Set the previous state for if the agent has either eye on the target.
         m_LeftEyeWasOnTarget = leftEyeOnTarget;
 		m_RightEyeWasOnTarget = rightEyeOnTarget;
+		m_LeftEyeWasPartiallyOnTarget = leftEyePartiallyOnTarget;
+		m_RightEyeWasPartiallyOnTarget = rightEyePartiallyOnTarget;
     }
 
 	/// <summary>
