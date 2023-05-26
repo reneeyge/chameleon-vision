@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using System;
 
 public class EyeControlAgent : Agent
 {
@@ -20,11 +21,11 @@ public class EyeControlAgent : Agent
 	[Tooltip("Camera used for rendering the right side view.")]
 	public Camera rightEyeCamera;
 
-	[Tooltip("Plane used to limit left eye camera rotation.")]
-	public GameObject leftEyeRestrictionPlane;
+	[Tooltip("Angles used to limit left eye camera rotation.")]
+	public Vector2 leftEyeRestrictionAngle;
 
-	[Tooltip("Plane used to limit right eye camera rotation.")]
-	public GameObject rightEyeRestrictionPlane;
+	[Tooltip("Angles used to limit right eye camera rotation.")]
+	public Vector2 rightEyeRestrictionAngle;
 
 	[Tooltip("Controls the speed at wich the agent is able to rotate each eye, in degrees per second.")]
 	[Range(10.0f, 180.0f)]
@@ -138,6 +139,13 @@ public class EyeControlAgent : Agent
 	public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
 	{
 		// TODO Mask actions that would cause the agent to pass the camera rotation limitations.
+            // Add left eye restriction angles as observations.
+            sensor.AddObservation(leftEyeRestrictionAngle.x);
+            sensor.AddObservation(leftEyeRestrictionAngle.y);
+
+            // Add right eye restriction angles as observations.
+            sensor.AddObservation(rightEyeRestrictionAngle.x);
+            sensor.AddObservation(rightEyeRestrictionAngle.y);
 	}
 
 	/// <summary>
@@ -160,6 +168,9 @@ public class EyeControlAgent : Agent
 
 		// Check if the target is in the frustrum for both the left and right cameras.
 		bool leftEyeOnTarget = TargetInCameraFrustrum(m_TargetMeshRenderer, leftEyeCamera);
+        // Clamp camera rotations to the corresponding restriction angles.
+        ClampCameraRotation(leftEyeCamera, leftEyeRestrictionAngle.x, leftEyeRestrictionAngle.y);
+        ClampCameraRotation(rightEyeCamera, rightEyeRestrictionAngle.x, rightEyeRestrictionAngle.y);
 		bool rightEyeOnTarget = TargetInCameraFrustrum(m_TargetMeshRenderer, rightEyeCamera);
 
 		// Reward the agent if the target comes into view of either eye.
@@ -244,12 +255,12 @@ public class EyeControlAgent : Agent
 	private void SetAgent()
 	{
 		// Rotate left camera to random angles in the x and y planes.
-		leftEyeCamera.transform.Rotate(Vector3.right, Random.Range(-180f, 180f));
-		leftEyeCamera.transform.Rotate(Vector3.up, Random.Range(-180f, 180f));
+		leftEyeCamera.transform.Rotate(Vector3.right, Random.Range(-leftEyeRestrictionAngle.x, leftEyeRestrictionAngle.x));
+		leftEyeCamera.transform.Rotate(Vector3.up, Random.Range(-leftEyeRestrictionAngle.y, leftEyeRestrictionAngle.y));
 
 		// Rotate right camera to random angles in the x and y planes.
-		rightEyeCamera.transform.Rotate(Vector3.right, Random.Range(-180f, 180f));
-		rightEyeCamera.transform.Rotate(Vector3.up, Random.Range(-180f, 180f));
+		rightEyeCamera.transform.Rotate(Vector3.right, Random.Range(-rightEyeRestrictionAngle.x, rightEyeRestrictionAngle.x));
+		rightEyeCamera.transform.Rotate(Vector3.up, Random.Range(-rightEyeRestrictionAngle.y, rightEyeRestrictionAngle.y));
 	}
 
 	/// <summary>
@@ -291,6 +302,62 @@ public class EyeControlAgent : Agent
 
     /// <summary>
     /// Check if the target's AABB from the target's bounds are utside the camera's frustrum. 
+    /// Clamp the camera's x and y angles, by the given angles (restricted to: -angle, angle).
+	/// The z angle is left as zero.
+    /// </summary>
+    /// <param name="camera">The camera to rotate.</param>
+    /// <param name="angleX">The angle in X to clamp to.</param>
+    /// <param name="angleY">The angle in Y to clamp to.</param>
+    void ClampCameraRotation(Camera camera, float angleX, float angleY)
+    {
+        // Get the clamped camara's rotation angles in the x, y, and z directions.
+        float rotationX = Mathf.Clamp(WrapAngle(camera.transform.localRotation.eulerAngles.x), -angleX, angleX);
+        float rotationY = Mathf.Clamp(WrapAngle(camera.transform.localRotation.eulerAngles.y), -angleY, angleY);
+
+        // Fix the camera's rotation to the clamped angles (leave z angle as zero).
+        camera.transform.localRotation = Quaternion.Euler(UnwrapAngle(rotationX), UnwrapAngle(rotationY), 0);
+    }
+
+    /// <summary>
+    /// Pass Euler angles to a range of (-180, 180].
+    /// </summary>
+    /// <param name="angle">The angle to wrap.</param>
+    /// <returns>The wraped angle in range (-180, 180].</returns>
+    private static float WrapAngle(float angle)
+    {
+		// Get the angle modulo 360.
+        angle %= 360;
+
+		// If the angle is greater than 180 degrees.
+        if (angle > 180)
+			// Return the angle as if starting from the other side of the cincunference.
+            return angle - 360;
+
+		// Otherwise, return the angle as is.
+        return angle;
+    }
+
+    /// <summary>
+    /// Pass angles in range (-180, 180] to Euler angles (range [0, 360)).
+    /// </summary>
+    /// <param name="angle">The angle to wrap.</param>
+    /// <returns>The wraped angle in range [0, 360).</returns>
+    private static float UnwrapAngle(float angle)
+    {
+        // Get the angle modulo 360.
+        angle %= 360;
+
+        // If the angle is greater than zero.
+        if (angle >= 0)
+            // Return the angle as is.
+            return angle;
+
+        // Otherwise, return the angle as if starting from the other side of the cincunference. 
+        return 360 + angle;
+    }
+
+    /// <summary>
+    /// Check if the target's AABB from the target's bounds are outside the camera's frustrum. 
     /// </summary>
     /// <param name="renderer">The target's mesh renderer.</param>
     /// <param name="camera">The camere to check for if the target is within its frustrum.</param>
