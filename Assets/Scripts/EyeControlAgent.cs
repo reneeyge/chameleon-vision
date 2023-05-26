@@ -51,7 +51,7 @@ public class EyeControlAgent : Agent
 	float m_TimeSinceDecision;
 
 	/// <summary>
-	/// The amount of time the 
+	/// The amount of time the agent has stayed on target.
 	/// </summary>
 	float m_TimeOnTarget;
 
@@ -122,6 +122,7 @@ public class EyeControlAgent : Agent
 	/// <summary>
 	/// Add vector observations if the useVectorObservations flag is set.
 	/// Use camera rotations in the x and y planes as observations.
+	/// Also use camera restriction angles.
 	/// </summary>
 	/// <param name="sensor">Vector sensor to add observations to.</param>
 	public override void CollectObservations(VectorSensor sensor)
