@@ -166,26 +166,35 @@ public class EyeControlAgent : Agent
 		RotateCamera(rightEyeCamera, Vector3.right, (CameraRotationActions) rightEyeActionX);
 		RotateCamera(rightEyeCamera, Vector3.up, (CameraRotationActions) rightEyeActionY);
 
-		// Check if the target is in the frustrum for both the left and right cameras.
-		bool leftEyeOnTarget = TargetInCameraFrustrum(m_TargetMeshRenderer, leftEyeCamera);
         // Clamp camera rotations to the corresponding restriction angles.
         ClampCameraRotation(leftEyeCamera, leftEyeRestrictionAngle.x, leftEyeRestrictionAngle.y);
         ClampCameraRotation(rightEyeCamera, rightEyeRestrictionAngle.x, rightEyeRestrictionAngle.y);
-		bool rightEyeOnTarget = TargetInCameraFrustrum(m_TargetMeshRenderer, rightEyeCamera);
 
-		// Reward the agent if the target comes into view of either eye.
-		// Unreward the agent if the target comes out of view of either eye.
-		AddReward(System.Convert.ToInt32(leftEyeOnTarget) - System.Convert.ToInt32(m_LeftEyeWasOnTarget));
+        // Check if the target is in the frustum for both the left and right cameras.
+        bool leftEyeOnTarget = TargetInCameraFrustum(m_TargetMeshRenderer, leftEyeCamera);
+		bool rightEyeOnTarget = TargetInCameraFrustum(m_TargetMeshRenderer, rightEyeCamera);
+
+        // Check if the target is partially in the frustum for both the left and right cameras.
+        bool leftEyePartiallyOnTarget = TargetPartiallyInCameraFrustrum(m_TargetMeshRenderer, leftEyeCamera);
+        bool rightEyePartiallyOnTarget = TargetPartiallyInCameraFrustrum(m_TargetMeshRenderer, rightEyeCamera);
+
+        // Reward the agent if the target comes into view of either eye.
+        // Unreward the agent if the target comes out of view of either eye.
+        AddReward(System.Convert.ToInt32(leftEyeOnTarget) - System.Convert.ToInt32(m_LeftEyeWasOnTarget));
 		AddReward(System.Convert.ToInt32(rightEyeOnTarget) - System.Convert.ToInt32(m_RightEyeWasOnTarget));
+
+        // Reward the agent if the target comes partially into view of either eye.
+        AddReward(System.Convert.ToInt32(leftEyePartiallyOnTarget) * 0.5f);
+        AddReward(System.Convert.ToInt32(rightEyePartiallyOnTarget) * 0.5f);
 
         // If both eyes are on target.
         if (leftEyeOnTarget && rightEyeOnTarget)
         {
 			// Add to the counter the amount of time that the agent has kept the target on view.
-			m_TimeOnTarget = Time.deltaTime;
+			m_TimeOnTarget += Time.deltaTime;
         }
 
-		// If the agent doesn't ahve both eyes on the target.
+		// If the agent doesn't have both eyes on the target.
 		else
 		{
 			// Remove reward from agent the longer it takes to find the target.
@@ -202,8 +211,8 @@ public class EyeControlAgent : Agent
             AddReward(2.0f);
 
             // End the episode.
-            EndEpisode();
-		}
+            EndEpisode(); 
+        }
 
         // Set the previous state for if the agent has either eye on the target.
         m_LeftEyeWasOnTarget = leftEyeOnTarget;
@@ -376,6 +385,19 @@ public class EyeControlAgent : Agent
 
 		// Return if the AABB planes from the target's bounds are outside the camera's frustrum planes.
 		return !GeometryUtility.TestPlanesAABB(planes, renderer.bounds); ;
+    /// <summary>
+    /// Check if the target's AABB from the target's bounds are outside the camera's frustum. 
+    /// </summary>
+    /// <param name="renderer">The target's mesh renderer.</param>
+    /// <param name="camera">The camere to check for if the target is within its frustum.</param>
+    /// <returns>True if the object is partially within the camera's frustum, false if otherwise.</returns>
+    bool TargetPartiallyInCameraFrustrum(Renderer renderer, Camera camera)
+    {
+        // Get the frustum planes for the left and right eye cameras.
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(camera);
+		
+        // Return if the AABB planes from the target's bounds are inside the camera's frustum planes.
+        return GeometryUtility.TestPlanesAABB(planes, renderer.bounds);
     }
 
 	/// <summary>
