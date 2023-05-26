@@ -156,15 +156,15 @@ public class EyeControlAgent : Agent
 	{
 		// Get left and right eye action buffers for the X and Y directions.
 		var leftEyeActionX = actionBuffers.DiscreteActions[0];
-		var leftEyeActionZ = actionBuffers.DiscreteActions[1];
+		var leftEyeActionY = actionBuffers.DiscreteActions[1];
 		var rightEyeActionX = actionBuffers.DiscreteActions[2];
-		var rightEyeActionZ = actionBuffers.DiscreteActions[3];
+		var rightEyeActionY = actionBuffers.DiscreteActions[3];
 		
 		// Rotate each camera by a given direction with the corresponding rotation action.
 		RotateCamera(leftEyeCamera, Vector3.right, (CameraRotationActions) leftEyeActionX);
-		RotateCamera(leftEyeCamera, Vector3.up, (CameraRotationActions) leftEyeActionZ);
+		RotateCamera(leftEyeCamera, Vector3.up, (CameraRotationActions) leftEyeActionY);
 		RotateCamera(rightEyeCamera, Vector3.right, (CameraRotationActions) rightEyeActionX);
-		RotateCamera(rightEyeCamera, Vector3.up, (CameraRotationActions) rightEyeActionZ);
+		RotateCamera(rightEyeCamera, Vector3.up, (CameraRotationActions) rightEyeActionY);
 
 		// Check if the target is in the frustrum for both the left and right cameras.
 		bool leftEyeOnTarget = TargetInCameraFrustrum(m_TargetMeshRenderer, leftEyeCamera);
