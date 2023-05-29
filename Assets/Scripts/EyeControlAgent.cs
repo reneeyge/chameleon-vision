@@ -46,6 +46,12 @@ public class EyeControlAgent : Agent
 
 	#region Member Parameters
 	/// <summary>
+	/// Reward coeficient calculated before the start of training.
+	/// Adjust rewards to ensure on goal completion agent's reward at least breck even.
+	/// </summary>
+	float m_RewardCoeficient;
+
+	/// <summary>
 	/// Time since last desicion was taken in inference mode.
 	/// </summary>
 	float m_TimeSinceDecision;
@@ -108,6 +114,9 @@ public class EyeControlAgent : Agent
 			// Set the max step to zero.
             this.MaxStep = 0;
         }
+
+		// Calculate reward coeficient based on max step, equivalent to the amount of seconds for full episode.
+		m_RewardCoeficient = MaxStep / 50;
 
         // Get enviroment parameters from the academy parameters.
         m_ResetParameters = Academy.Instance.EnvironmentParameters;
@@ -190,13 +199,13 @@ public class EyeControlAgent : Agent
 
         // Reward the agent if the target comes into view of either eye.
         // Unreward the agent if the target comes out of view of either eye.
-        AddReward(System.Convert.ToInt32(leftEyeOnTarget) - System.Convert.ToInt32(m_LeftEyeWasOnTarget));
-		AddReward(System.Convert.ToInt32(rightEyeOnTarget) - System.Convert.ToInt32(m_RightEyeWasOnTarget));
+        AddReward((System.Convert.ToInt32(leftEyeOnTarget) - System.Convert.ToInt32(m_LeftEyeWasOnTarget)) * 0.1f * m_RewardCoeficient);
+		AddReward((System.Convert.ToInt32(rightEyeOnTarget) - System.Convert.ToInt32(m_RightEyeWasOnTarget)) * 0.1f * m_RewardCoeficient);
 
         // Reward the agent if the target comes partially into view of either eye.
         // Unreward the agent if the target comes out of view of either eye.
-        AddReward((System.Convert.ToInt32(leftEyePartiallyOnTarget) - System.Convert.ToInt32(m_LeftEyeWasPartiallyOnTarget)) * 0.5f);
-        AddReward((System.Convert.ToInt32(rightEyePartiallyOnTarget) - System.Convert.ToInt32(m_RightEyeWasPartiallyOnTarget)) * 0.5f);
+        AddReward((System.Convert.ToInt32(leftEyePartiallyOnTarget) - System.Convert.ToInt32(m_LeftEyeWasPartiallyOnTarget)) * 0.05f * m_RewardCoeficient);
+        AddReward((System.Convert.ToInt32(rightEyePartiallyOnTarget) - System.Convert.ToInt32(m_RightEyeWasPartiallyOnTarget)) * 0.05f * m_RewardCoeficient);
 
         // If both eyes are on target.
         if (leftEyeOnTarget && rightEyeOnTarget)
@@ -219,7 +228,7 @@ public class EyeControlAgent : Agent
 		if (m_TimeOnTarget >= eyeOnTargetTime)
 		{
             // Reward the agent for completing the episode.
-            AddReward(2.0f);
+            AddReward(0.2f * m_RewardCoeficient);
 
             // End the episode.
             EndEpisode(); 
