@@ -274,7 +274,7 @@ public class EyeControlAgent : Agent
 	/// <summary>
 	/// Randomice agent eyes' orientation.
 	/// </summary>
-	private void SetAgent()
+	void SetAgent()
 	{
 		// Rotate left camera to random angles in the x and y planes.
 		leftEyeCamera.transform.Rotate(Vector3.right, Random.Range(-leftEyeRestrictionAngle.x, leftEyeRestrictionAngle.x));
@@ -288,7 +288,7 @@ public class EyeControlAgent : Agent
 	/// <summary>
 	/// Randomice target position on backgrownd.
 	/// </summary>
-	public void SetTarget()
+	void SetTarget()
 	{
 		// Randomice position in y and z.
 		target.transform.localPosition = new Vector3(5, Random.Range(-4, 4), Random.Range(-4, 4));
@@ -343,7 +343,7 @@ public class EyeControlAgent : Agent
     /// </summary>
     /// <param name="angle">The angle to wrap.</param>
     /// <returns>The wraped angle in range (-180, 180].</returns>
-    private static float WrapAngle(float angle)
+    static float WrapAngle(float angle)
     {
 		// Get the angle modulo 360.
         angle %= 360;
@@ -362,7 +362,7 @@ public class EyeControlAgent : Agent
     /// </summary>
     /// <param name="angle">The angle to wrap.</param>
     /// <returns>The wraped angle in range [0, 360).</returns>
-    private static float UnwrapAngle(float angle)
+    static float UnwrapAngle(float angle)
     {
         // Get the angle modulo 360.
         angle %= 360;
