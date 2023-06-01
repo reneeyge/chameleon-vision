@@ -35,9 +35,6 @@ public class EyeControlAgent : Agent
     [Range(0.0f, 10.0f)]
     public float eyeOnTargetTime;
 
-    [Tooltip("Wether the agent should use the camera rotation positions as inputs.")]
-	public bool useVectorObservations;
-
 	[Header("On inference")]
 	[Tooltip("Time between desicions on inference mode.")]
 	[Range(0.05f, 0.5f)]
@@ -146,25 +143,21 @@ public class EyeControlAgent : Agent
 	/// <param name="sensor">Vector sensor to add observations to.</param>
 	public override void CollectObservations(VectorSensor sensor)
 	{
-		// If the agent showld use the camera rotations as observations.
-		if (useVectorObservations)
-		{
-			// Add left eye rotation as observations.
-			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x));
-			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y));
+		// Add left eye rotation as observations.
+		sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x));
+		sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y));
 
-			// Add right eye rotation as observations.
-			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x));
-			sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y));
+		// Add right eye rotation as observations.
+		sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x));
+		sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y));
 
-            // Add left eye restriction angles as observations.
-            sensor.AddObservation(leftEyeRestrictionAngle.x);
-            sensor.AddObservation(leftEyeRestrictionAngle.y);
+        // Add left eye restriction angles as observations.
+        sensor.AddObservation(leftEyeRestrictionAngle.x);
+        sensor.AddObservation(leftEyeRestrictionAngle.y);
 
-            // Add right eye restriction angles as observations.
-            sensor.AddObservation(rightEyeRestrictionAngle.x);
-            sensor.AddObservation(rightEyeRestrictionAngle.y);
-        }
+        // Add right eye restriction angles as observations.
+        sensor.AddObservation(rightEyeRestrictionAngle.x);
+        sensor.AddObservation(rightEyeRestrictionAngle.y);
 	}
 
 	/// <summary>
