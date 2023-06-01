@@ -230,7 +230,6 @@ MonoBehaviour:
   rightEyeRestrictionAngle: {x: 60, y: 60}
   eyeRotationSpeed: 60
   eyeOnTargetTime: 5
-  useVectorObservations: 1
   timeBetweenDecisionsAtInference: 0
 --- !u!1 &8604692022470001253
 GameObject:
