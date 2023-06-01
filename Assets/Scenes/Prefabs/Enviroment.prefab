@@ -46,8 +46,6 @@ GameObject:
   - component: {fileID: 8604692022386023994}
   - component: {fileID: 8604692022386023993}
   - component: {fileID: 8604692022386023992}
-  - component: {fileID: 8604692022386023991}
-  - component: {fileID: 8604692022386023990}
   - component: {fileID: 8604692022386023989}
   - component: {fileID: 8604692022386023985}
   m_Layer: 3
@@ -137,46 +135,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8604692022386023991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8604692022386023999}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 282f342c2ab144bf38be65d4d0c4e07d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Camera: {fileID: 8590726989046454088}
-  m_SensorName: LeftCameraSensor
-  m_Width: 30
-  m_Height: 30
-  m_Grayscale: 0
-  m_ObservationType: 0
-  m_ObservationStacks: 1
-  m_Compression: 1
---- !u!114 &8604692022386023990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8604692022386023999}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 282f342c2ab144bf38be65d4d0c4e07d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Camera: {fileID: 1216317419354855528}
-  m_SensorName: RightCameraSensor
-  m_Width: 30
-  m_Height: 30
-  m_Grayscale: 0
-  m_ObservationType: 0
-  m_ObservationStacks: 1
-  m_Compression: 1
 --- !u!114 &8604692022386023989
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,7 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 8
+    VectorObservationSize: 40
     NumStackedVectorObservations: 5
     m_ActionSpec:
       m_NumContinuousActions: 0

@@ -156,9 +156,45 @@ public class EyeControlAgent : Agent
         sensor.AddObservation(leftEyeRestrictionAngle.y / 180f);
 
         // Add right eye restriction angles as observations.
-	}
         sensor.AddObservation(rightEyeRestrictionAngle.x / 180f);
         sensor.AddObservation(rightEyeRestrictionAngle.y / 180f);
+
+        // Calculate the target's center Viewport on the cameras' viewports.
+        Vector3 leftViewportPosition = leftEyeCamera.WorldToViewportPoint(m_TargetMeshRenderer.bounds.center);
+		Vector3 rightViewportPosition = rightEyeCamera.WorldToViewportPoint(m_TargetMeshRenderer.bounds.center);
+
+        // If the left eye had the target partially within view.
+        if (m_LeftEyeWasPartiallyOnTarget)
+		{
+			// Add relative target's x and y screen position as observations.
+			sensor.AddObservation(leftViewportPosition.x);
+			sensor.AddObservation(leftViewportPosition.y);
+        }
+
+		// If the left eye did't have the target partially within view.
+        else
+		{
+			// Add out of bounds observation.
+			sensor.AddObservation(-100);
+			sensor.AddObservation(-100);
+        }
+
+        // If the right eye had the target partially within view.
+        if (m_RightEyeWasPartiallyOnTarget)
+        {
+            // Add relative target's x and y screen position as observations.
+            sensor.AddObservation(rightViewportPosition.x);
+            sensor.AddObservation(rightViewportPosition.y);
+        }
+
+        // If the right eye did't have the target partially within view.
+        else
+        {
+            // Add out of bounds observation.
+            sensor.AddObservation(-100);
+            sensor.AddObservation(-100);
+        }
+    }
 
 	/// <summary>
 	/// Receibe actions and process them for eye control.
@@ -431,16 +467,6 @@ public class EyeControlAgent : Agent
 	/// </summary>
 	public void FixedUpdate()
 	{
-		// If both cameras are set and there is a graphical device to render.
-		if (leftEyeCamera != null 
-			&& rightEyeCamera != null 
-			&& SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null)
-		{
-			// Force render both cameras.
-			leftEyeCamera.Render();
-			rightEyeCamera.Render();
-		}
-
 		// If not on inference mode or heuristic.
 		if (Academy.Instance.IsCommunicatorOn)
 		{
