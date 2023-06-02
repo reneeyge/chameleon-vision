@@ -166,22 +166,31 @@ public class EyeControlAgent : Agent
         // If the left eye had the target partially within view.
         if (m_LeftEyeWasPartiallyOnTarget)
 		{
-			// Add relative target's x and y screen position as observations.
-			sensor.AddObservation(leftViewportPosition.x);
-			sensor.AddObservation(leftViewportPosition.y);
+			// Add pseudo boolean flag as observation, for target out of bounds.
+            sensor.AddObservation(0);
+
+            // Add relative target's x and y screen position as observations.
+            sensor.AddObservation(leftViewportPosition.x);
+            sensor.AddObservation(leftViewportPosition.y);
         }
 
 		// If the left eye did't have the target partially within view.
         else
 		{
-			// Add out of bounds observation.
-			sensor.AddObservation(-100);
-			sensor.AddObservation(-100);
+            // Add pseudo boolean flag as observation, for target out of bounds.
+            sensor.AddObservation(1);
+
+            // Add out of bounds observation.
+			sensor.AddObservation(-1);
+            sensor.AddObservation(-1);
         }
 
         // If the right eye had the target partially within view.
         if (m_RightEyeWasPartiallyOnTarget)
         {
+            // Add pseudo boolean flag as observation, for target out of bounds.
+            sensor.AddObservation(0);
+
             // Add relative target's x and y screen position as observations.
             sensor.AddObservation(rightViewportPosition.x);
             sensor.AddObservation(rightViewportPosition.y);
@@ -190,9 +199,12 @@ public class EyeControlAgent : Agent
         // If the right eye did't have the target partially within view.
         else
         {
+            // Add pseudo boolean flag as observation, for target out of bounds.
+            sensor.AddObservation(1);
+
             // Add out of bounds observation.
-            sensor.AddObservation(-100);
-            sensor.AddObservation(-100);
+            sensor.AddObservation(-1);
+            sensor.AddObservation(-1);
         }
     }
 
