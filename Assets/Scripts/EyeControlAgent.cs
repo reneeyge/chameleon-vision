@@ -148,8 +148,8 @@ public class EyeControlAgent : Agent
 		sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y) / 180f);
 
 		// Add right eye rotation as observations.
-		sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x) / 180f);
-		sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y) / 180f);
+		sensor.AddObservation(WrapAngle(rightEyeCamera.transform.localRotation.eulerAngles.x) / 180f);
+		sensor.AddObservation(WrapAngle(rightEyeCamera.transform.localRotation.eulerAngles.y) / 180f);
 
         // Add left eye restriction angles as observations.
         sensor.AddObservation(leftEyeRestrictionAngle.x / 180f);
