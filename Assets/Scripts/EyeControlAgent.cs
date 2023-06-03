@@ -483,7 +483,7 @@ public class EyeControlAgent : Agent
     bool TargetInCameraFrustum(Renderer renderer, Camera camera)
 	{
         // Get the frustum planes for the left and right eye cameras.
-        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(leftEyeCamera);
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(camera);
 
 		// Initialice condition on true. 
 		bool isInFrustrum = true;
