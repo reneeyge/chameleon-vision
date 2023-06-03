@@ -79,6 +79,26 @@ public class EyeControlAgent : Agent
     bool m_RightEyeWasPartiallyOnTarget;
 
     /// <summary>
+    /// Position of the target on the left eye's viewport.
+    /// </summary>
+    Vector3 m_LeftTargetViewportPosition;
+
+    /// <summary>
+    /// Position of the target on the right eye's viewport.
+    /// </summary>
+    Vector3 m_RightTargetViewportPosition;
+
+    /// <summary>
+    /// Previous target position on the left eye's viewport.
+    /// </summary>
+    Vector3 m_LeftPreviousTargetViewportPosition;
+
+    /// <summary>
+    /// Previous target position on the right eye's viewport.
+    /// </summary>
+    Vector3 m_RightPreviousTargetViewportPosition;
+
+    /// <summary>
     /// Academy training paramters.
     /// </summary>
     EnvironmentParameters m_ResetParameters;
@@ -125,6 +145,10 @@ public class EyeControlAgent : Agent
         m_LeftEyeWasOnTarget = false;
         m_RightEyeWasOnTarget = false;
 
+        // Calculate the target's center Viewport on the cameras' viewports.
+        m_LeftPreviousTargetViewportPosition = leftEyeCamera.WorldToViewportPoint(m_TargetMeshRenderer.bounds.center);
+        m_RightPreviousTargetViewportPosition = rightEyeCamera.WorldToViewportPoint(m_TargetMeshRenderer.bounds.center);
+
         // Clear the eye sight timer.
         m_TimeOnTarget = 0.0f;
 
@@ -160,8 +184,8 @@ public class EyeControlAgent : Agent
         sensor.AddObservation(rightEyeRestrictionAngle.y / 180f);
 
         // Calculate the target's center Viewport on the cameras' viewports.
-        Vector3 leftViewportPosition = leftEyeCamera.WorldToViewportPoint(m_TargetMeshRenderer.bounds.center);
-		Vector3 rightViewportPosition = rightEyeCamera.WorldToViewportPoint(m_TargetMeshRenderer.bounds.center);
+        m_LeftTargetViewportPosition = leftEyeCamera.WorldToViewportPoint(m_TargetMeshRenderer.bounds.center);
+		m_RightTargetViewportPosition = rightEyeCamera.WorldToViewportPoint(m_TargetMeshRenderer.bounds.center);
 
         // If the left eye had the target partially within view.
         if (m_LeftEyeWasPartiallyOnTarget)
@@ -170,8 +194,8 @@ public class EyeControlAgent : Agent
             sensor.AddObservation(0);
 
             // Add relative target's x and y screen position as observations.
-            sensor.AddObservation(leftViewportPosition.x);
-            sensor.AddObservation(leftViewportPosition.y);
+            sensor.AddObservation(m_LeftTargetViewportPosition.x);
+            sensor.AddObservation(m_LeftTargetViewportPosition.y);
         }
 
 		// If the left eye did't have the target partially within view.
@@ -186,14 +210,14 @@ public class EyeControlAgent : Agent
         }
 
         // If the right eye had the target partially within view.
-        if (m_RightEyeWasPartiallyOnTarget)
+        if (m_LeftEyeWasPartiallyOnTarget)
         {
             // Add pseudo boolean flag as observation, for target out of bounds.
             sensor.AddObservation(0);
 
             // Add relative target's x and y screen position as observations.
-            sensor.AddObservation(rightViewportPosition.x);
-            sensor.AddObservation(rightViewportPosition.y);
+            sensor.AddObservation(m_RightTargetViewportPosition.x);
+            sensor.AddObservation(m_RightTargetViewportPosition.y);
         }
 
         // If the right eye did't have the target partially within view.
@@ -248,6 +272,24 @@ public class EyeControlAgent : Agent
         AddReward((System.Convert.ToInt32(leftEyePartiallyOnTarget) - System.Convert.ToInt32(m_LeftEyeWasPartiallyOnTarget)) * 0.05f * m_RewardCoeficient);
         AddReward((System.Convert.ToInt32(rightEyePartiallyOnTarget) - System.Convert.ToInt32(m_RightEyeWasPartiallyOnTarget)) * 0.05f * m_RewardCoeficient);
 
+        // If the left eye was on target.
+        if (m_LeftEyeWasPartiallyOnTarget & leftEyePartiallyOnTarget)
+        {
+            // Reward the agent if the target comes closer to the center of view.
+            // Unreward the agent if the target comes closer to the center of view.
+            AddReward((Math.Abs(m_LeftPreviousTargetViewportPosition.x - 0.5f) - Math.Abs(m_LeftTargetViewportPosition.x - 0.5f)) * 0.05f * m_RewardCoeficient);
+            AddReward((Math.Abs(m_LeftPreviousTargetViewportPosition.y - 0.5f) - Math.Abs(m_LeftTargetViewportPosition.y - 0.5f)) * 0.05f * m_RewardCoeficient);
+        }
+
+        // If the right eye was on target.
+        if (m_RightEyeWasPartiallyOnTarget & rightEyePartiallyOnTarget)
+        {
+            // Reward the agent if the target comes closer to the center of view.
+            // Unreward the agent if the target comes closer to the center of view.
+            AddReward((Math.Abs(m_RightPreviousTargetViewportPosition.x - 0.5f) - Math.Abs(m_RightTargetViewportPosition.x - 0.5f)) * 0.05f * m_RewardCoeficient);
+            AddReward((Math.Abs(m_RightPreviousTargetViewportPosition.y - 0.5f) - Math.Abs(m_RightTargetViewportPosition.y - 0.5f)) * 0.05f * m_RewardCoeficient);
+        }       
+
         // If both eyes are on target.
         if (leftEyeOnTarget && rightEyeOnTarget)
         {
@@ -280,6 +322,8 @@ public class EyeControlAgent : Agent
 		m_RightEyeWasOnTarget = rightEyeOnTarget;
 		m_LeftEyeWasPartiallyOnTarget = leftEyePartiallyOnTarget;
 		m_RightEyeWasPartiallyOnTarget = rightEyePartiallyOnTarget;
+        m_LeftPreviousTargetViewportPosition = m_LeftTargetViewportPosition;
+        m_RightPreviousTargetViewportPosition = m_RightTargetViewportPosition;
     }
 
 	/// <summary>
