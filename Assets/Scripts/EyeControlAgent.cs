@@ -360,7 +360,7 @@ public class EyeControlAgent : Agent
         // Reward the agent if the target comes into view of either eye.
         // Unreward the agent if the target comes out of view of either eye.
         AddReward((System.Convert.ToInt32(m_ViewOnTarget.Left.Current) - System.Convert.ToInt32(m_ViewOnTarget.Left.Previous)) * 0.1f * m_RewardCoeficient);
-        AddReward((System.Convert.ToInt32(m_ViewOnTarget.Left.Current) - System.Convert.ToInt32(m_ViewOnTarget.Left.Previous)) * 0.1f * m_RewardCoeficient);
+        AddReward((System.Convert.ToInt32(m_ViewOnTarget.Right.Current) - System.Convert.ToInt32(m_ViewOnTarget.Right.Previous)) * 0.1f * m_RewardCoeficient);
 
         // Reward the agent if the target comes partially into view of either eye.
         // Unreward the agent if the target comes out of view of either eye.
