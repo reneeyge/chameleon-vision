@@ -189,6 +189,7 @@ MonoBehaviour:
   rightEyeRestrictionAngle: {x: 60, y: 60}
   eyeRotationSpeed: 60
   eyeOnTargetTime: 5
+  useCameraPositionObservations: 1
   timeBetweenDecisionsAtInference: 0
 --- !u!114 &2299834129302297538
 MonoBehaviour:

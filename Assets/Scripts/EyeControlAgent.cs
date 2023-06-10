@@ -73,6 +73,9 @@ public class EyeControlAgent : Agent
     [Range(0.0f, 10.0f)]
     public float eyeOnTargetTime;
 
+    [Tooltip("Whether the agent should be given the eyes' angles as observations.")]
+    public bool useCameraPositionObservations;
+
 	[Header("On inference")]
 	[Tooltip("Time between desicions on inference mode.")]
 	[Range(0.05f, 0.5f)]
@@ -281,7 +284,7 @@ public class EyeControlAgent : Agent
             // Add relative target's x and y screen position as observations.
             sensor.AddObservation(m_ViewportTargetPosition.Left.Current.x);
             sensor.AddObservation(m_ViewportTargetPosition.Left.Current.y);
-            sensor.AddObservation(0);
+            sensor.AddObservation(0f);
         }
 
         // If the left eye did't have the target partially within view.
@@ -305,7 +308,7 @@ public class EyeControlAgent : Agent
             // Add relative target's x and y screen position as observations.
             sensor.AddObservation(m_ViewportTargetPosition.Right.Current.x);
             sensor.AddObservation(m_ViewportTargetPosition.Right.Current.y);
-            sensor.AddObservation(0);
+            sensor.AddObservation(0f);
         }
 
         // If the right eye did't have the target partially within view.
