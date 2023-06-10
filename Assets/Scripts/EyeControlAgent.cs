@@ -281,6 +281,7 @@ public class EyeControlAgent : Agent
             // Add relative target's x and y screen position as observations.
             sensor.AddObservation(m_ViewportTargetPosition.Left.Current.x);
             sensor.AddObservation(m_ViewportTargetPosition.Left.Current.y);
+            sensor.AddObservation(0);
         }
 
         // If the left eye did't have the target partially within view.
@@ -292,6 +293,7 @@ public class EyeControlAgent : Agent
             // Add out of bounds observation.
             sensor.AddObservation(-1);
             sensor.AddObservation(-1);
+            sensor.AddObservation(Random.Range(-1f, 1f));
         }
 
         // If the right eye had the target partially within view.
@@ -303,6 +305,7 @@ public class EyeControlAgent : Agent
             // Add relative target's x and y screen position as observations.
             sensor.AddObservation(m_ViewportTargetPosition.Right.Current.x);
             sensor.AddObservation(m_ViewportTargetPosition.Right.Current.y);
+            sensor.AddObservation(0);
         }
 
         // If the right eye did't have the target partially within view.
@@ -314,6 +317,7 @@ public class EyeControlAgent : Agent
             // Add out of bounds observation.
             sensor.AddObservation(-1);
             sensor.AddObservation(-1);
+            sensor.AddObservation(Random.Range(-1f, 1f));
         }
     }
 
