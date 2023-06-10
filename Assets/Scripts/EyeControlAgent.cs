@@ -161,6 +161,9 @@ public class EyeControlAgent : Agent
 
         // Set the target.
         SetTarget();
+
+        // Apply the current curriculum parameteres.
+        ApplyCurriculum();
     }
 
     /// <summary>
@@ -186,6 +189,9 @@ public class EyeControlAgent : Agent
 
         // Set the target.
         SetTarget();
+
+        // Apply the current curriculum parameteres.
+        ApplyCurriculum();
     }
 
     /// <summary>
@@ -209,6 +215,16 @@ public class EyeControlAgent : Agent
     {
         // Randomice position in y and z.
         target.transform.localPosition = new Vector3(5, Random.Range(-4, 4), Random.Range(-4, 4));
+    }
+
+    /// <summary>
+    /// Apply curriculum parameters.
+    /// </summary>
+    void ApplyCurriculum()
+    {
+        // Set cameras' field of view.
+        leftEyeCamera.focalLength = m_ResetParameters.GetWithDefault("focal_length", 25f);
+        rightEyeCamera.focalLength = m_ResetParameters.GetWithDefault("focal_length", 25f);
     }
     #endregion
 
