@@ -99,10 +99,15 @@ public class EyeControlAgent : Agent
     /// </summary>
     EnvironmentParameters m_ResetParameters;
 
-	/// <summary>
-	/// The target's mesh renderer.
-	/// </summary>
-	MeshRenderer m_TargetMeshRenderer;
+    /// <summary>
+    /// Goal vector sensor component, dedicated to goal signals.
+    /// </summary>
+    VectorSensorComponent m_GoalSensor;
+
+    /// <summary>
+    /// The target's mesh renderer.
+    /// </summary>
+    MeshRenderer m_TargetMeshRenderer;
 
     /// <summary>
     /// Wheter the camera is fully focused on the target or not.
@@ -135,6 +140,9 @@ public class EyeControlAgent : Agent
 
         // Calculate reward coeficient based on max step, equivalent to the amount of seconds for full episode.
         m_RewardCoeficient = MaxStep / 50;
+
+        // Get the goal vector sensor component.
+        m_GoalSensor = this.GetComponent<VectorSensorComponent>();
 
         // Get enviroment parameters from the academy parameters.
         m_ResetParameters = Academy.Instance.EnvironmentParameters;
@@ -267,8 +275,8 @@ public class EyeControlAgent : Agent
         // If the left eye had the target partially within view.
         if (m_ViewPartiallyOnTarget.Left.Previous)
         {
-            // Add pseudo boolean flag as observation, for target out of bounds.
-            sensor.AddObservation(0);
+            // Add boolean flag as observation, for target out of bounds.
+            m_GoalSensor.GetSensor().AddObservation(false);
 
             // Add relative target's x and y screen position as observations.
             sensor.AddObservation(m_ViewportTargetPosition.Left.Current.x);
@@ -278,8 +286,8 @@ public class EyeControlAgent : Agent
         // If the left eye did't have the target partially within view.
         else
         {
-            // Add pseudo boolean flag as observation, for target out of bounds.
-            sensor.AddObservation(1);
+            // Add boolean flag as observation, for target out of bounds.
+            m_GoalSensor.GetSensor().AddObservation(true);
 
             // Add out of bounds observation.
             sensor.AddObservation(-1);
@@ -289,8 +297,8 @@ public class EyeControlAgent : Agent
         // If the right eye had the target partially within view.
         if (m_ViewPartiallyOnTarget.Right.Previous)
         {
-            // Add pseudo boolean flag as observation, for target out of bounds.
-            sensor.AddObservation(0);
+            // Add boolean flag as observation, for target out of bounds.
+            m_GoalSensor.GetSensor().AddObservation(false);
 
             // Add relative target's x and y screen position as observations.
             sensor.AddObservation(m_ViewportTargetPosition.Right.Current.x);
@@ -300,8 +308,8 @@ public class EyeControlAgent : Agent
         // If the right eye did't have the target partially within view.
         else
         {
-            // Add pseudo boolean flag as observation, for target out of bounds.
-            sensor.AddObservation(1);
+            // Add boolean flag as observation, for target out of bounds.
+            m_GoalSensor.GetSensor().AddObservation(true);
 
             // Add out of bounds observation.
             sensor.AddObservation(-1);
