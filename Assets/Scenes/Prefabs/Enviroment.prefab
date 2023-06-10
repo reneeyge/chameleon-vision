@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 44
+    VectorObservationSize: 8
     NumStackedVectorObservations: 5
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SensorName: GoalSensor
-  m_ObservationSize: 4
+  m_ObservationSize: 8
   m_ObservationType: 1
 --- !u!1 &8604692022470001253
 GameObject:

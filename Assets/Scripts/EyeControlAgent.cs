@@ -302,9 +302,9 @@ public class EyeControlAgent : Agent
             m_GoalSensor.GetSensor().AddObservation(false);
 
             // Add relative target's x and y screen position as observations.
-            sensor.AddObservation(m_ViewportTargetPosition.Left.Current.x);
-            sensor.AddObservation(m_ViewportTargetPosition.Left.Current.y);
-            sensor.AddObservation(0f);
+            m_GoalSensor.GetSensor().AddObservation(m_ViewportTargetPosition.Left.Current.x);
+            m_GoalSensor.GetSensor().AddObservation(m_ViewportTargetPosition.Left.Current.y);
+            m_GoalSensor.GetSensor().AddObservation(0f);
         }
 
         // If the left eye did't have the target partially within view.
@@ -314,9 +314,9 @@ public class EyeControlAgent : Agent
             m_GoalSensor.GetSensor().AddObservation(true);
 
             // Add out of bounds observation.
-            sensor.AddObservation(-1);
-            sensor.AddObservation(-1);
-            sensor.AddObservation(Random.Range(-1f, 1f));
+            m_GoalSensor.GetSensor().AddObservation(-1);
+            m_GoalSensor.GetSensor().AddObservation(-1);
+            m_GoalSensor.GetSensor().AddObservation(Random.Range(-1f, 1f));
         }
 
         // If the right eye had the target partially within view.
@@ -326,9 +326,9 @@ public class EyeControlAgent : Agent
             m_GoalSensor.GetSensor().AddObservation(false);
 
             // Add relative target's x and y screen position as observations.
-            sensor.AddObservation(m_ViewportTargetPosition.Right.Current.x);
-            sensor.AddObservation(m_ViewportTargetPosition.Right.Current.y);
-            sensor.AddObservation(0f);
+            m_GoalSensor.GetSensor().AddObservation(m_ViewportTargetPosition.Right.Current.x);
+            m_GoalSensor.GetSensor().AddObservation(m_ViewportTargetPosition.Right.Current.y);
+            m_GoalSensor.GetSensor().AddObservation(0f);
         }
 
         // If the right eye did't have the target partially within view.
@@ -338,9 +338,9 @@ public class EyeControlAgent : Agent
             m_GoalSensor.GetSensor().AddObservation(true);
 
             // Add out of bounds observation.
-            sensor.AddObservation(-1);
-            sensor.AddObservation(-1);
-            sensor.AddObservation(Random.Range(-1f, 1f));
+            m_GoalSensor.GetSensor().AddObservation(-1);
+            m_GoalSensor.GetSensor().AddObservation(-1);
+            m_GoalSensor.GetSensor().AddObservation(Random.Range(-1f, 1f));
         }
     }
 
