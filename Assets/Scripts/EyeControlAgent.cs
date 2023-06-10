@@ -271,21 +271,25 @@ public class EyeControlAgent : Agent
     /// <param name="sensor">Vector sensor to add observations to.</param>
     public override void CollectObservations(VectorSensor sensor)
     {
-        // Add left eye rotation as observations.
-        sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x) / 180f);
-        sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y) / 180f);
+        // If the agent should use camera position observations.
+        if (useCameraPositionObservations)
+        {
+            // Add left eye rotation as observations.
+            sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.x) / 180f);
+            sensor.AddObservation(WrapAngle(leftEyeCamera.transform.localRotation.eulerAngles.y) / 180f);
 
-        // Add right eye rotation as observations.
-        sensor.AddObservation(WrapAngle(rightEyeCamera.transform.localRotation.eulerAngles.x) / 180f);
-        sensor.AddObservation(WrapAngle(rightEyeCamera.transform.localRotation.eulerAngles.y) / 180f);
+            // Add right eye rotation as observations.
+            sensor.AddObservation(WrapAngle(rightEyeCamera.transform.localRotation.eulerAngles.x) / 180f);
+            sensor.AddObservation(WrapAngle(rightEyeCamera.transform.localRotation.eulerAngles.y) / 180f);
 
-        // Add left eye restriction angles as observations.
-        sensor.AddObservation(leftEyeRestrictionAngle.x / 180f);
-        sensor.AddObservation(leftEyeRestrictionAngle.y / 180f);
+            // Add left eye restriction angles as observations.
+            sensor.AddObservation(leftEyeRestrictionAngle.x / 180f);
+            sensor.AddObservation(leftEyeRestrictionAngle.y / 180f);
 
-        // Add right eye restriction angles as observations.
-        sensor.AddObservation(rightEyeRestrictionAngle.x / 180f);
-        sensor.AddObservation(rightEyeRestrictionAngle.y / 180f);
+            // Add right eye restriction angles as observations.
+            sensor.AddObservation(rightEyeRestrictionAngle.x / 180f);
+            sensor.AddObservation(rightEyeRestrictionAngle.y / 180f);
+        }
 
         // Calculate the target's center Viewport on the cameras' viewports.
         m_ViewportTargetPosition.Left.Current = leftEyeCamera.WorldToViewportPoint(m_TargetMeshRenderer.bounds.center);
