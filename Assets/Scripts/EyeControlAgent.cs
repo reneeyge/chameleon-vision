@@ -394,21 +394,21 @@ public class EyeControlAgent : Agent
 
         // Reward the agent if the target comes into view of either eye.
         // Unreward the agent if the target comes out of view of either eye.
-        AddReward((System.Convert.ToInt32(m_ViewOnTarget.Left.Current) - System.Convert.ToInt32(m_ViewOnTarget.Left.Previous)) * 0.1f * m_RewardCoeficient);
-        AddReward((System.Convert.ToInt32(m_ViewOnTarget.Right.Current) - System.Convert.ToInt32(m_ViewOnTarget.Right.Previous)) * 0.1f * m_RewardCoeficient);
+        AddReward((System.Convert.ToInt32(m_ViewOnTarget.Left.Current) - System.Convert.ToInt32(m_ViewOnTarget.Left.Previous)) * 0.2f * m_RewardCoeficient);
+        AddReward((System.Convert.ToInt32(m_ViewOnTarget.Right.Current) - System.Convert.ToInt32(m_ViewOnTarget.Right.Previous)) * 0.2f * m_RewardCoeficient);
 
         // Reward the agent if the target comes partially into view of either eye.
         // Unreward the agent if the target comes out of view of either eye.
-        AddReward((System.Convert.ToInt32(m_ViewPartiallyOnTarget.Left.Current) - System.Convert.ToInt32(m_ViewPartiallyOnTarget.Left.Previous)) * 0.05f * m_RewardCoeficient);
-        AddReward((System.Convert.ToInt32(m_ViewPartiallyOnTarget.Right.Current) - System.Convert.ToInt32(m_ViewPartiallyOnTarget.Right.Previous)) * 0.05f * m_RewardCoeficient);
+        AddReward((System.Convert.ToInt32(m_ViewPartiallyOnTarget.Left.Current) - System.Convert.ToInt32(m_ViewPartiallyOnTarget.Left.Previous)) * 0.1f * m_RewardCoeficient);
+        AddReward((System.Convert.ToInt32(m_ViewPartiallyOnTarget.Right.Current) - System.Convert.ToInt32(m_ViewPartiallyOnTarget.Right.Previous)) * 0.1f * m_RewardCoeficient);
 
         // If the left eye was on target.
         if (m_ViewPartiallyOnTarget.Left.Previous & m_ViewPartiallyOnTarget.Left.Current)
         {
             // Reward the agent if the target comes closer to the center of view.
-            // Unreward the agent if the target comes closer to the center of view.
-            AddReward((Math.Abs(m_ViewportTargetPosition.Left.Previous.x - 0.5f) - Math.Abs(m_ViewportTargetPosition.Left.Current.x - 0.5f)) * 0.05f * m_RewardCoeficient);
-            AddReward((Math.Abs(m_ViewportTargetPosition.Left.Previous.y - 0.5f) - Math.Abs(m_ViewportTargetPosition.Left.Current.y - 0.5f)) * 0.05f * m_RewardCoeficient);
+            // Unreward the agent if the target moves away from the center of view.
+            AddReward((Math.Abs(m_ViewportTargetPosition.Left.Previous.x - 0.5f) - Math.Abs(m_ViewportTargetPosition.Left.Current.x - 0.5f)) * 0.1f * m_RewardCoeficient);
+            AddReward((Math.Abs(m_ViewportTargetPosition.Left.Previous.y - 0.5f) - Math.Abs(m_ViewportTargetPosition.Left.Current.y - 0.5f)) * 0.1f * m_RewardCoeficient);
         }
 
         // If the right eye was on target.
@@ -416,8 +416,8 @@ public class EyeControlAgent : Agent
         {
             // Reward the agent if the target comes closer to the center of view.
             // Unreward the agent if the target comes closer to the center of view.
-            AddReward((Math.Abs(m_ViewportTargetPosition.Right.Previous.x - 0.5f) - Math.Abs(m_ViewportTargetPosition.Right.Current.x - 0.5f)) * 0.05f * m_RewardCoeficient);
-            AddReward((Math.Abs(m_ViewportTargetPosition.Right.Previous.y - 0.5f) - Math.Abs(m_ViewportTargetPosition.Right.Current.y - 0.5f)) * 0.05f * m_RewardCoeficient);
+            AddReward((Math.Abs(m_ViewportTargetPosition.Right.Previous.x - 0.5f) - Math.Abs(m_ViewportTargetPosition.Right.Current.x - 0.5f)) * 0.1f * m_RewardCoeficient);
+            AddReward((Math.Abs(m_ViewportTargetPosition.Right.Previous.y - 0.5f) - Math.Abs(m_ViewportTargetPosition.Right.Current.y - 0.5f)) * 0.1f * m_RewardCoeficient);
         }
 
         // If both eyes are on target.
@@ -441,7 +441,7 @@ public class EyeControlAgent : Agent
         if (m_TimeOnTarget >= eyeOnTargetTime)
         {
             // Reward the agent for completing the episode.
-            AddReward(0.2f * m_RewardCoeficient);
+            AddReward(0.4f * m_RewardCoeficient);
 
             // End the episode.
             EndEpisode();
